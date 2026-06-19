@@ -1,0 +1,4 @@
+com\atguigu\tingshu\common\rabbit\config\RabbitInitConfigApplicationListener.class
+com\atguigu\tingshu\common\rabbit\constant\MqConst.class
+com\atguigu\tingshu\common\rabbit\service\RabbitService.class
+com\atguigu\tingshu\common\rabbit\entity\GuiguCorrelationData.class

@@ -1,0 +1,9 @@
+com\atguigu\tingshu\common\config\knife4j\Knife4jConfig.class
+com\atguigu\tingshu\common\config\redis\RedisConfig.class
+com\atguigu\tingshu\common\constant\RedisConstant.class
+com\atguigu\tingshu\common\handler\GlobalExceptionHandler.class
+com\atguigu\tingshu\common\interceptor\FeignInterceptor.class
+com\atguigu\tingshu\common\constant\SystemConstant.class
+com\atguigu\tingshu\common\config\mybatisPlus\MybatisPlusConfig.class
+com\atguigu\tingshu\common\config\redis\RedisConfig$1.class
+com\atguigu\tingshu\common\execption\GuiguException.class
