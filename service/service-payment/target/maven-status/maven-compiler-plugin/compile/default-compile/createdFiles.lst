@@ -1,0 +1,9 @@
+com\atguigu\tingshu\ServicePaymentApplication.class
+com\atguigu\tingshu\payment\service\impl\PaymentInfoServiceImpl.class
+com\atguigu\tingshu\payment\service\WxPayService.class
+com\atguigu\tingshu\payment\service\impl\WxPayServiceImpl.class
+com\atguigu\tingshu\payment\service\PaymentInfoService.class
+com\atguigu\tingshu\payment\config\WxPayV3Config.class
+com\atguigu\tingshu\payment\api\WxPayApiController.class
+com\atguigu\tingshu\payment\mapper\PaymentInfoMapper.class
+com\atguigu\tingshu\payment\util\PayUtil.class

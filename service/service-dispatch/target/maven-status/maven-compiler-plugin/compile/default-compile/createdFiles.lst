@@ -1,0 +1,3 @@
+com\atguigu\tingshu\dispatch\mapper\XxlJobLogMapper.class
+com\atguigu\tingshu\dispatch\job\DispatchJobHandler.class
+com\atguigu\tingshu\ServiceDispatchApplication.class

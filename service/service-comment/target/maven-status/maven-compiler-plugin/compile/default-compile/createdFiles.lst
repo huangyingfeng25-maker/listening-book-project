@@ -1,0 +1,4 @@
+com\atguigu\tingshu\ServiceCommentApplication.class
+com\atguigu\tingshu\comment\service\impl\CommentServiceImpl.class
+com\atguigu\tingshu\comment\api\CommentApiController.class
+com\atguigu\tingshu\comment\service\CommentService.class

@@ -1,0 +1,13 @@
+com\atguigu\tingshu\live\util\LiveAutoAddressUtil.class
+com\atguigu\tingshu\live\api\LiveRoomApiController.class
+com\atguigu\tingshu\live\mapper\LiveRoomMapper.class
+com\atguigu\tingshu\live\message\RedisChannelConfig.class
+com\atguigu\tingshu\live\service\impl\LiveRoomServiceImpl.class
+com\atguigu\tingshu\live\mapper\LiveTagMapper.class
+com\atguigu\tingshu\ServiceLiveApplication.class
+com\atguigu\tingshu\live\service\LiveRoomService.class
+com\atguigu\tingshu\live\util\WebSocketLocalContainerUtil.class
+com\atguigu\tingshu\live\api\LiveTagApiController.class
+com\atguigu\tingshu\live\message\RedisMessageReceive.class
+com\atguigu\tingshu\live\service\LiveTagService.class
+com\atguigu\tingshu\live\service\impl\LiveTagServiceImpl.class
