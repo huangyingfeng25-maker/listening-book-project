@@ -16,10 +16,13 @@ import java.util.List;
 import java.util.Map;
 
 
-@Tag(name = "分类管理")
+@Tag(name = "分类管理")//这是 Swagger / OpenAPI 的注解。
 @RestController
 @RequestMapping(value="/api/album/category")
-@SuppressWarnings({"all"})
+@SuppressWarnings({"all"})//这是 Java 自带的注解。
+//作用是：
+//告诉编译器或者 IDEA：
+// 不要提示这个类里的警告。
 public class BaseCategoryApiController {
 
 //	routes:
@@ -36,9 +39,7 @@ public class BaseCategoryApiController {
 	public Result getBaseCategoryList(){
 		//调用service方法
 		//List<Map> list = baseCategoryService.getBaseCategoryList();
-
 		List<JSONObject> list = baseCategoryService.getBaseCategoryList();
-
 		return Result.ok(list);
 	}
 }
