@@ -6,6 +6,29 @@
 
 <mapper namespace="com.atguigu.tingshu.album.mapper.BaseAttributeMapper">
 
+<!--    自定义返回接口-->
+    <resultMap id="baseAttributeMap" type="com.atguigu.tingshu.model.album.BaseAttribute" autoMapping="true">
+<!--        主键对应关系-->
+        <!--id:表示主键 property：表示实体类的属性名
+        column：表示通过sql 执行以后查询出来的字段名-->
+        <id column="id" property="id"></id>
+        <collection property="attributeValueList" ofType="com.atguigu.tingshu.model.album.BaseAttributeValue" autoMapping="true">
+        <id column="attribute_value_id" property="id"></id>
+        </collection>
+    </resultMap>
 
+    <select id="selectAttribute" resultMap="baseAttributeMap">
+        select
+            ba.id,
+            ba.attribute_name,
+            ba.category1_id,
+            bv.id attribute_value_id,
+            bv.value_name,
+            bv.attribute_id
+        from
+            base_attribute ba inner join base_attribute_value bv on ba.id=bv.attribute_id
+        where category1_id=#{category1Id}
+        order by ba.id
+    </select>
 </mapper>
 

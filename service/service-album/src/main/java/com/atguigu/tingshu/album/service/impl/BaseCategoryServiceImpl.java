@@ -110,4 +110,11 @@ public class BaseCategoryServiceImpl extends ServiceImpl<BaseCategory1Mapper, Ba
 		});
 		return finalList;
 	}
+
+	////根据一级分类id查询对应标签数据(标签名称和标签值)
+	@Override
+	public List<BaseAttribute> findAttribute(Long category1Id) {
+		//调用mapper
+		return baseAttributeMapper.selectAttribute(category1Id);
+	}
 }

@@ -42,5 +42,12 @@ public class BaseCategoryApiController {
 		List<JSONObject> list = baseCategoryService.getBaseCategoryList();
 		return Result.ok(list);
 	}
+	//根据一级分类id查询对应标签数据(标签名称和标签值)
+	//api/album/category/findAttribute/2
+	@GetMapping("findAttribute/{category1Id}")
+	public Result findAttribte(@PathVariable("category1Id")Long category1Id){
+		List<BaseAttribute> list=baseCategoryService.findAttribute(category1Id);
+		return Result.ok(list);
+	}
 }
 
