@@ -11,8 +11,16 @@
 <!--        主键对应关系-->
         <!--id:表示主键 property：表示实体类的属性名
         column：表示通过sql 执行以后查询出来的字段名-->
-        <id column="id" property="id"></id>
-        <collection property="attributeValueList" ofType="com.atguigu.tingshu.model.album.BaseAttributeValue" autoMapping="true">
+        <id column="id" property="id"></id> <!--autoMapping 是 MyBatis 里的一个配置也就是数据库字段和 Java 对象属性名能对上的时候，MyBatis 自动帮你赋值。-->
+
+        <!--result : 表示映射普通字段-->
+        <!--<result property="" column=""></result>-->
+        <!--mybatis 如何配置一对多-->
+        <!--ofType : 返回的数据类型-->
+        <collection property="attributeValueList"
+                    ofType="com.atguigu.tingshu.model.album.BaseAttributeValue"
+                    autoMapping="true">
+            <!--如果有字段重复则起别名-->
         <id column="attribute_value_id" property="id"></id>
         </collection>
     </resultMap>
