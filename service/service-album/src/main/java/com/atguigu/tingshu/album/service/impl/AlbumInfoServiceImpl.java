@@ -110,7 +110,6 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
 	public IPage<AlbumListVo> selectAlbumPage(Page<AlbumListVo> pageParam, AlbumInfoQuery albumInfoQuery) {
 		return albumInfoMapper.selectUserAlbumPage(pageParam,albumInfoQuery);
 	}
-
 	//删除专辑信息
 	@Override
 	public void removeAlbumInfoById(Long albumId) {
@@ -133,6 +132,52 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
 		LambdaQueryWrapper<AlbumStat>queryWrapper2=new LambdaQueryWrapper<>();
 		queryWrapper2.eq(AlbumStat::getAlbumId,albumId);
 		albumStatMapper.delete(queryWrapper2);
+	}
+
+	//修改-根据专辑id获取专辑数据
+	@Override
+	public AlbumInfo getAlbumInfo(Long albumId) {
+		//1 根据专辑id获取标签数据
+		AlbumInfo albumInfo=albumInfoMapper.selectById(albumId);
+
+		//2 根据专辑id获取标签数据
+		LambdaQueryWrapper<AlbumAttributeValue>wrapper=new LambdaQueryWrapper<>();
+		wrapper.eq(AlbumAttributeValue::getAlbumId,albumId);
+		List<AlbumAttributeValue> albumAttributeValueList = albumAttributeValueMapper.selectList(wrapper);
+
+		//3.把获取标签数据list集合封装到专辑对象里面
+		albumInfo.setAlbumAttributeValueVoList(albumAttributeValueList);
+		return albumInfo;
+	}
+
+	//修改
+	@Override
+	public void updateAlbumInfo(Long albumId, AlbumInfoVo albumInfoVo) {
+		//根据专辑id修改专辑基本信息
+		AlbumInfo albumInfo=albumInfoMapper.selectById(albumId);
+		BeanUtils.copyProperties(albumInfoVo,albumInfo);
+		albumInfoMapper.updateById(albumInfo);
+
+		//根据专辑id删除标签名称和标签数据
+		LambdaQueryWrapper<AlbumAttributeValue>wrapper=new LambdaQueryWrapper<>();
+		wrapper.eq(AlbumAttributeValue::getAlbumId,albumId);
+		albumAttributeValueMapper.delete(wrapper);
+
+		//添加专辑下面 标签名称和标签数据
+		//	保存专辑属性数据
+		List<AlbumAttributeValueVo> albumAttributeValueVoList =
+				albumInfoVo.getAlbumAttributeValueVoList();
+		if(!CollectionUtils.isEmpty(albumAttributeValueVoList)){
+			albumAttributeValueVoList.stream().forEach(albumAttributeValueVo -> {
+				//	创建专辑属性对象
+				AlbumAttributeValue albumAttributeValue=new AlbumAttributeValue();
+				//	进行数据拷贝
+				BeanUtils.copyProperties(albumAttributeValueVo,albumAttributeValue);
+				//	赋值专辑属性Id
+				albumAttributeValue.setAlbumId(albumId);
+				albumAttributeValueMapper.insert(albumAttributeValue);
+			});
+		}
 	}
 
 	//保存专辑统计数据的方法
