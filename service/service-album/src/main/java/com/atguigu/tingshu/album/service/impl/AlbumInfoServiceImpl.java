@@ -3,23 +3,30 @@ package com.atguigu.tingshu.album.service.impl;
 import com.atguigu.tingshu.album.mapper.AlbumAttributeValueMapper;
 import com.atguigu.tingshu.album.mapper.AlbumInfoMapper;
 import com.atguigu.tingshu.album.mapper.AlbumStatMapper;
+import com.atguigu.tingshu.album.service.AlbumAttributeValueService;
 import com.atguigu.tingshu.album.service.AlbumInfoService;
 import com.atguigu.tingshu.common.constant.SystemConstant;
 import com.atguigu.tingshu.model.album.AlbumAttributeValue;
 import com.atguigu.tingshu.model.album.AlbumInfo;
 import com.atguigu.tingshu.model.album.AlbumStat;
+import com.atguigu.tingshu.query.album.AlbumInfoQuery;
 import com.atguigu.tingshu.vo.album.AlbumAttributeValueVo;
 import com.atguigu.tingshu.vo.album.AlbumInfoVo;
+import com.atguigu.tingshu.vo.album.AlbumListVo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -32,6 +39,8 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
     private AlbumAttributeValueMapper albumAttributeValueMapper;
 	@Autowired
 	private AlbumStatMapper albumStatMapper;
+	@Autowired
+	private AlbumAttributeValueService albumAttributeValueService;
 
 	//保存专辑
 	//当前操作多张表，保证多张表数据一致性，添加事务
@@ -63,17 +72,20 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
 		//2.添加专辑下面的标签名称和标签值数据album_attribute_value
 		List<AlbumAttributeValueVo> albumAttributeValueVoList =
 				albumInfoVo.getAlbumAttributeValueVoList();
-		//非空判断
-		if(!CollectionUtils.isEmpty(albumAttributeValueVoList)){
-			albumAttributeValueVoList.stream().forEach(albumAttributeValueVo -> {
-				AlbumAttributeValue albumAttributeValue=new AlbumAttributeValue();
-				//AlbumAttributeValueVo -- AlbumAttributeValue
-				BeanUtils.copyProperties(albumAttributeValueVo,albumAttributeValue);
-				//专辑ID
-				albumAttributeValue.setAlbumId(albumInfo.getId());
-				albumAttributeValueMapper.insert(albumAttributeValue);
-			});
+
+		//List<AlbumAttributeValueVo> -> List<AlbumAttributeValue>
+		if(!CollectionUtils.isEmpty(albumAttributeValueVoList)) {
+			List<AlbumAttributeValue> albumAttributeValueList =
+					albumAttributeValueVoList.stream().map(albumAttributeValueVo -> {
+						AlbumAttributeValue albumAttributeValue = new AlbumAttributeValue();
+						BeanUtils.copyProperties(albumAttributeValueVo, albumAttributeValue);
+						albumAttributeValue.setAlbumId(albumInfo.getId());
+						return albumAttributeValue;
+					}).collect(Collectors.toList());
+
+			albumAttributeValueService.saveBatch(albumAttributeValueList);
 		}
+
 
 		//3 添加专辑四个统计数据 播放量、订阅量等 初始值 0 album_stat
 		//播放量
@@ -86,6 +98,13 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
 		this.saveAlbumStat(albumInfo.getId(), SystemConstant.ALBUM_STAT_COMMENT);
 
 	}
+
+	//查询专辑列表
+	@Override
+	public IPage<AlbumListVo> selectAlbumPage(Page<AlbumListVo> pageParam, AlbumInfoQuery albumInfoQuery) {
+		return albumInfoMapper.selectUserAlbumPage(pageParam,albumInfoQuery);
+	}
+
 	//保存专辑统计数据的方法
 	public void saveAlbumStat(Long albumId,String statType){
 		AlbumStat albumStat=new AlbumStat();
