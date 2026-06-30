@@ -3,16 +3,20 @@ package com.atguigu.tingshu.album.service.impl;
 import com.atguigu.tingshu.album.mapper.AlbumAttributeValueMapper;
 import com.atguigu.tingshu.album.mapper.AlbumInfoMapper;
 import com.atguigu.tingshu.album.mapper.AlbumStatMapper;
+import com.atguigu.tingshu.album.mapper.TrackInfoMapper;
 import com.atguigu.tingshu.album.service.AlbumAttributeValueService;
 import com.atguigu.tingshu.album.service.AlbumInfoService;
 import com.atguigu.tingshu.common.constant.SystemConstant;
+import com.atguigu.tingshu.common.execption.GuiguException;
 import com.atguigu.tingshu.model.album.AlbumAttributeValue;
 import com.atguigu.tingshu.model.album.AlbumInfo;
 import com.atguigu.tingshu.model.album.AlbumStat;
+import com.atguigu.tingshu.model.album.TrackInfo;
 import com.atguigu.tingshu.query.album.AlbumInfoQuery;
 import com.atguigu.tingshu.vo.album.AlbumAttributeValueVo;
 import com.atguigu.tingshu.vo.album.AlbumInfoVo;
 import com.atguigu.tingshu.vo.album.AlbumListVo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -41,6 +45,8 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
 	private AlbumStatMapper albumStatMapper;
 	@Autowired
 	private AlbumAttributeValueService albumAttributeValueService;
+	@Autowired
+	private TrackInfoMapper trackInfoMapper;
 
 	//保存专辑
 	//当前操作多张表，保证多张表数据一致性，添加事务
@@ -103,6 +109,30 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
 	@Override
 	public IPage<AlbumListVo> selectAlbumPage(Page<AlbumListVo> pageParam, AlbumInfoQuery albumInfoQuery) {
 		return albumInfoMapper.selectUserAlbumPage(pageParam,albumInfoQuery);
+	}
+
+	//删除专辑信息
+	@Override
+	public void removeAlbumInfoById(Long albumId) {
+		//1.判断当前专辑下面是否包含声音，如果包含不能删除
+		//select count(*) from track_info where album_id=?
+		LambdaQueryWrapper<TrackInfo> queryWrapper=new LambdaQueryWrapper<>();
+		queryWrapper.eq(TrackInfo::getAlbumId,albumId);
+		Long count = trackInfoMapper.selectCount(queryWrapper);
+		if(count>0){
+			throw new GuiguException(400,"该专辑下存在未删除的声音");
+		}
+		//2.1删除专辑的基本数据
+		albumInfoMapper.deleteById(albumId);
+		//2.2删除专辑标签名和标签数据
+		LambdaQueryWrapper<AlbumAttributeValue>queryWrapper1= new LambdaQueryWrapper<>();
+		queryWrapper1.eq(AlbumAttributeValue::getAlbumId,albumId);
+		albumAttributeValueMapper.delete(queryWrapper1);
+
+		//2.3删除专辑4个统计数据
+		LambdaQueryWrapper<AlbumStat>queryWrapper2=new LambdaQueryWrapper<>();
+		queryWrapper2.eq(AlbumStat::getAlbumId,albumId);
+		albumStatMapper.delete(queryWrapper2);
 	}
 
 	//保存专辑统计数据的方法

@@ -14,4 +14,7 @@ public interface AlbumInfoService extends IService<AlbumInfo> {
     void saveAlbumInfo(AlbumInfoVo albumInfoVo);
     //查询专辑列表
     IPage<AlbumListVo> selectAlbumPage(Page<AlbumListVo> pageParam, AlbumInfoQuery albumInfoQuery);
+
+    //删除专辑信息
+    void removeAlbumInfoById(Long id);
 }

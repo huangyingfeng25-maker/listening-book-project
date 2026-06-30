@@ -7,6 +7,7 @@ import com.atguigu.tingshu.vo.album.AlbumInfoVo;
 import com.atguigu.tingshu.vo.album.AlbumListVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,14 @@ public class AlbumInfoApiController {
 
 	@Autowired
 	private AlbumInfoService albumInfoService;
+
+	//删除专辑信息
+	@Operation(summary = "删除专辑信息")
+	@DeleteMapping("removeAlbumInfo/{id}")
+	public Result removeAlbumInfoById(@PathVariable Long id) {
+		albumInfoService.removeAlbumInfoById(id);
+		return Result.ok();
+	}
 
 	//查询专辑列表
 	@PostMapping("findUserAlbumPage/{page}/{limit}")
