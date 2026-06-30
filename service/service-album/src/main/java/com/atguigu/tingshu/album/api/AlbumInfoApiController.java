@@ -2,6 +2,7 @@ package com.atguigu.tingshu.album.api;
 
 import com.atguigu.tingshu.album.service.AlbumInfoService;
 import com.atguigu.tingshu.common.result.Result;
+import com.atguigu.tingshu.model.album.AlbumInfo;
 import com.atguigu.tingshu.query.album.AlbumInfoQuery;
 import com.atguigu.tingshu.vo.album.AlbumInfoVo;
 import com.atguigu.tingshu.vo.album.AlbumListVo;
@@ -22,6 +23,27 @@ public class AlbumInfoApiController {
 
 	@Autowired
 	private AlbumInfoService albumInfoService;
+
+	//修改接口
+	//Request URL：http://Localhost/api/album/albumInfo/updateAlbumInfo/1607
+	//Request Method：Put
+	@Operation(summary = "修改专辑")
+	@PutMapping("/updateAlbumInfo/{albumId}")
+	public Result updateById(@PathVariable Long albumId,
+							 @RequestBody @Validated AlbumInfoVo albumInfoVo){
+		//	调用服务层方法
+		albumInfoService.updateAlbumInfo(albumId,albumInfoVo);
+		return Result.ok();
+	}
+
+	//修改-根据专辑id获取专辑数据
+	//Request URL:http://Localhost/api/album/albumInfo/getALlbumInfo/1599
+	//Request Method：GET
+	@GetMapping("getAlbumInfo/{albumId}")
+	public Result<AlbumInfo> getAlbumInfo(@PathVariable Long albumId){
+		AlbumInfo albumInfo=albumInfoService.getAlbumInfo(albumId);
+		return Result.ok(albumInfo);
+	}
 
 	//删除专辑信息
 	@Operation(summary = "删除专辑信息")

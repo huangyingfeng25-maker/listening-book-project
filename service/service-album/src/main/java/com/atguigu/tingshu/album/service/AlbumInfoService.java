@@ -17,4 +17,9 @@ public interface AlbumInfoService extends IService<AlbumInfo> {
 
     //删除专辑信息
     void removeAlbumInfoById(Long id);
+    //修改-根据专辑id获取专辑数据
+    AlbumInfo getAlbumInfo(Long albumId);
+
+    //修改接口
+    void updateAlbumInfo(Long albumId, AlbumInfoVo albumInfoVo);
 }
