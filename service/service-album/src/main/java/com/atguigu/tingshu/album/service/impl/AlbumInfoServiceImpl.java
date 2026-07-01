@@ -180,6 +180,27 @@ public class AlbumInfoServiceImpl extends ServiceImpl<AlbumInfoMapper, AlbumInfo
 		}
 	}
 
+	//获取当前用户专辑列表
+	//默认查询100个专辑
+	@Override
+	public List<AlbumInfo> findUserAllAlbumList(Long userId) {
+		//创建page对象，传入当前页和每页记录数
+		Page<AlbumInfo> pageParam=new Page<>(1,100);
+		//selectid id,album_title from album_info where user_id=1 order by id desc
+		LambdaQueryWrapper<AlbumInfo>wrapper=new LambdaQueryWrapper<>();
+		//指定查询字段
+		wrapper.select(AlbumInfo::getId,AlbumInfo::getAlbumTitle);
+		//根据userId查询
+		wrapper.eq(AlbumInfo::getUserId,userId);
+		//排序 专辑id desc
+		wrapper.orderByDesc(AlbumInfo::getId);
+		//调用selectPage方法实现分页查询，第一个参数page对象，第二个参数条件对象
+		IPage<AlbumInfo>albumInfoIPage=albumInfoMapper.selectPage(pageParam,wrapper);
+		//从IPage对象里面获取数据list集合
+		List<AlbumInfo> list = albumInfoIPage.getRecords();
+		return list;
+	}
+
 	//保存专辑统计数据的方法
 	public void saveAlbumStat(Long albumId,String statType){
 		AlbumStat albumStat=new AlbumStat();

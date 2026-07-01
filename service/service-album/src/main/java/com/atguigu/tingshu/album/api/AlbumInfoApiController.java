@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "专辑管理")
 @RestController
 @RequestMapping("api/album/albumInfo")
@@ -23,6 +25,21 @@ public class AlbumInfoApiController {
 
 	@Autowired
 	private AlbumInfoService albumInfoService;
+
+	/**
+	 * 获取当前用户专辑列表
+	 */
+	/**
+	 * 获取当前用户专辑列表
+	 * @return
+	 */
+	@Operation(summary = "获取当前用户全部专辑列表")
+	@GetMapping("findUserAllAlbumList")
+	public Result findUserAllAlbumList() {
+		Long userId=1L;	//TODO 后续完善
+		List<AlbumInfo> list = albumInfoService.findUserAllAlbumList(userId);
+		return Result.ok(list);
+	}
 
 	//修改接口
 	//Request URL：http://Localhost/api/album/albumInfo/updateAlbumInfo/1607
