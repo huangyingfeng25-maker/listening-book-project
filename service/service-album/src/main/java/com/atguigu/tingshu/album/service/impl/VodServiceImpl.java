@@ -11,9 +11,7 @@ import com.qcloud.vod.model.VodUploadRequest;
 import com.qcloud.vod.model.VodUploadResponse;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.vod.v20180717.VodClient;
-import com.tencentcloudapi.vod.v20180717.models.DescribeMediaInfosRequest;
-import com.tencentcloudapi.vod.v20180717.models.DescribeMediaInfosResponse;
-import com.tencentcloudapi.vod.v20180717.models.MediaInfo;
+import com.tencentcloudapi.vod.v20180717.models.*;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,5 +91,18 @@ public class VodServiceImpl implements VodService {
             return trackMediaInfoVo;
         }
         return null;
+    }
+
+    @SneakyThrows
+    @Override
+    public void removeTrack(String mediaFileId) {
+        Credential cred = new Credential(vodConstantProperties.getSecretId(), vodConstantProperties.getSecretKey());
+        // 实例化要请求产品的client对象,clientProfile是可选的
+        VodClient client = new VodClient(cred, "");
+        // 实例化一个请求对象,每个接口都会对应一个request对象
+        DeleteMediaRequest req = new DeleteMediaRequest();
+        req.setFileId(mediaFileId);
+        // 返回的resp是一个DeleteMediaResponse的实例，与请求对象对应
+        DeleteMediaResponse response = client.DeleteMedia(req);
     }
 }

@@ -12,4 +12,6 @@ public interface VodService {
 
     //根据声音的mediaFileId调用腾讯云方法获取
     TrackMediaInfoVo getmediaaInfoByFileId(@NotEmpty(message = "媒体文件Id不能为空") String mediaFileId);
+
+    void removeTrack(String mediaFileId);
 }

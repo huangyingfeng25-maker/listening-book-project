@@ -105,6 +105,33 @@ public class TrackInfoServiceImpl extends ServiceImpl<TrackInfoMapper, TrackInfo
 		return trackInfoMapper.selectUserTrackPage(pageParam,trackInfoQuery);
 	}
 
+	//删除声音
+	@Override
+	public void removeTrackInfo(Long trackId) {
+		//根据声音id获取专辑id
+		TrackInfo trackInfo = trackInfoMapper.selectById(trackId);
+
+		//1 根据声音id删除声音基本信息
+		trackInfoMapper.deleteById(trackId);
+
+		//2 修改声音所在专辑声音数量-1
+		Long albumId = trackInfo.getAlbumId();
+		//根据专辑id查询专辑数据，把数量-1，进行更新
+		AlbumInfo albumInfo = albumInfoMapper.selectById(albumId);
+		Integer includeTrackCount = albumInfo.getIncludeTrackCount();
+		albumInfo.setIncludeTrackCount(includeTrackCount-1);
+		albumInfoMapper.updateById(albumInfo);
+
+		//3 删除统计数据
+		LambdaQueryWrapper<TrackStat>wrapper=new LambdaQueryWrapper<>();
+		wrapper.eq(TrackStat::getTrackId,trackId);
+		trackStatMapper.delete(wrapper);
+
+		//4 删除腾讯云声音文件
+		//删除声音媒体
+		vodService.removeTrack(trackInfo.getMediaFileId());
+	}
+
 	/**
 		 * 初始化统计数量
 		 * @param trackId

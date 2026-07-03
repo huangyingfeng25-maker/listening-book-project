@@ -29,6 +29,13 @@ public class TrackInfoApiController {
 	@Autowired
 	private VodService vodService;
 
+	//删除声音
+	@DeleteMapping("removeTrackInfo/{id}")
+	public Result removeTrackInfo(@PathVariable Long id){
+		trackInfoService.removeTrackInfo(id);
+		return Result.ok();
+	}
+
 	//声音列表
 	/**
 	 * 查看声音专辑列表
