@@ -9,9 +9,13 @@ import com.atguigu.tingshu.common.constant.SystemConstant;
 import com.atguigu.tingshu.model.album.AlbumInfo;
 import com.atguigu.tingshu.model.album.TrackInfo;
 import com.atguigu.tingshu.model.album.TrackStat;
+import com.atguigu.tingshu.query.album.TrackInfoQuery;
 import com.atguigu.tingshu.vo.album.TrackInfoVo;
+import com.atguigu.tingshu.vo.album.TrackListVo;
 import com.atguigu.tingshu.vo.album.TrackMediaInfoVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -95,7 +99,13 @@ public class TrackInfoServiceImpl extends ServiceImpl<TrackInfoMapper, TrackInfo
 		this.saveTrackStat(trackInfo.getId(),SystemConstant.TRACK_STAT_PRAISE);
 		this.saveTrackStat(trackInfo.getId(),SystemConstant.TRACK_STAT_COMMENT);
 	}
-		/**
+
+	@Override
+	public IPage<TrackListVo> findUserTrackPage(Page<TrackListVo> pageParam, TrackInfoQuery trackInfoQuery) {
+		return trackInfoMapper.selectUserTrackPage(pageParam,trackInfoQuery);
+	}
+
+	/**
 		 * 初始化统计数量
 		 * @param trackId
 		 * @param trackType

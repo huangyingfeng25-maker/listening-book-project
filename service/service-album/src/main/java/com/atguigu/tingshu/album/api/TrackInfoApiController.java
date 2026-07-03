@@ -3,15 +3,17 @@ package com.atguigu.tingshu.album.api;
 import com.atguigu.tingshu.album.service.TrackInfoService;
 import com.atguigu.tingshu.album.service.VodService;
 import com.atguigu.tingshu.common.result.Result;
+import com.atguigu.tingshu.query.album.TrackInfoQuery;
 import com.atguigu.tingshu.vo.album.TrackInfoVo;
+import com.atguigu.tingshu.vo.album.TrackListVo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
@@ -26,6 +28,30 @@ public class TrackInfoApiController {
 	private TrackInfoService trackInfoService;
 	@Autowired
 	private VodService vodService;
+
+	//声音列表
+	/**
+	 * 查看声音专辑列表
+	 * @param page
+	 * @param limit
+	 * @param trackInfoQuery
+	 * @return
+	 */
+	@Operation(summary = "获取当前用户声音分页列表")
+	@PostMapping("findUserTrackPage/{page}/{limit}")
+	public Result<IPage<TrackListVo>> findUserTrackPage(@Parameter(name = "page",description = "当前页面",required = true)
+														@PathVariable Long page,//当前页
+														@Parameter(name = "limit",description = "每页记录数",required = true)
+														@PathVariable Long limit,//每页记录数
+														@Parameter(name = "trackInfoQuery",description = "查询对象",required = false)
+														@RequestBody TrackInfoQuery trackInfoQuery){
+		trackInfoQuery.setUserId(1L);
+		Page<TrackListVo>pageParam=new Page<>(page,limit);
+		pageParam.setSearchCount(false);
+		IPage<TrackListVo>trackListVoIPage= trackInfoService.findUserTrackPage(pageParam,trackInfoQuery);
+		//返回数据
+		return Result.ok(trackListVoIPage);
+	}
 
 
 	@Operation(summary = "新增声音")
