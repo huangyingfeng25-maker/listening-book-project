@@ -3,6 +3,7 @@ package com.atguigu.tingshu.album.api;
 import com.atguigu.tingshu.album.service.TrackInfoService;
 import com.atguigu.tingshu.album.service.VodService;
 import com.atguigu.tingshu.common.result.Result;
+import com.atguigu.tingshu.model.album.TrackInfo;
 import com.atguigu.tingshu.query.album.TrackInfoQuery;
 import com.atguigu.tingshu.vo.album.TrackInfoVo;
 import com.atguigu.tingshu.vo.album.TrackListVo;
@@ -28,6 +29,33 @@ public class TrackInfoApiController {
 	private TrackInfoService trackInfoService;
 	@Autowired
 	private VodService vodService;
+
+	/**
+	 * 保存修改声音数据
+	 * @param id
+	 * @param trackInfoVo
+	 * @return
+	 */
+	@Operation(summary = "修改声音")
+	@PutMapping("updateTrackInfo/{id}")
+	public Result updateById(@PathVariable Long id, @RequestBody @Validated TrackInfoVo trackInfoVo) {
+		//	调用服务层方法
+		trackInfoService.updateTrackInfo(id, trackInfoVo);
+		return Result.ok();
+	}
+
+	/**
+	 * 根据Id 获取数据
+	 * @param id
+	 * @return
+	 */
+	@Operation(summary = "获取声音信息")
+	@GetMapping("getTrackInfo/{id}")
+	public Result<TrackInfo> getTrackInfo(@PathVariable Long id) {
+		//	调用服务层方法
+		TrackInfo trackInfo = trackInfoService.getById(id);
+		return Result.ok(trackInfo);
+	}
 
 	//删除声音
 	@DeleteMapping("removeTrackInfo/{id}")

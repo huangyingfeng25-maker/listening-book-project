@@ -17,4 +17,7 @@ public interface TrackInfoService extends IService<TrackInfo> {
 
     //删除声音
     void removeTrackInfo(Long id);
+
+    //保存修改声音数据
+    void updateTrackInfo(Long id, TrackInfoVo trackInfoVo);
 }

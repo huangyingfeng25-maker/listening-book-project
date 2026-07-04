@@ -6,6 +6,8 @@ import com.atguigu.tingshu.album.mapper.TrackStatMapper;
 import com.atguigu.tingshu.album.service.TrackInfoService;
 import com.atguigu.tingshu.album.service.VodService;
 import com.atguigu.tingshu.common.constant.SystemConstant;
+import com.atguigu.tingshu.common.execption.GuiguException;
+import com.atguigu.tingshu.common.result.ResultCodeEnum;
 import com.atguigu.tingshu.model.album.AlbumInfo;
 import com.atguigu.tingshu.model.album.TrackInfo;
 import com.atguigu.tingshu.model.album.TrackStat;
@@ -130,6 +132,39 @@ public class TrackInfoServiceImpl extends ServiceImpl<TrackInfoMapper, TrackInfo
 		//4 删除腾讯云声音文件
 		//删除声音媒体
 		vodService.removeTrack(trackInfo.getMediaFileId());
+	}
+
+	//保存修改声音数据
+	@Override
+	public void updateTrackInfo(Long trackId, TrackInfoVo trackInfoVo) {
+		//1 根据trackId获取声音原始数据
+		TrackInfo trackInfo = trackInfoMapper.selectById(trackId);
+		//获取原始的音频文件id fileid
+		String mediaFileId_database= trackInfo.getMediaFileId();
+		//设置修改值
+		BeanUtils.copyProperties(trackInfoVo,trackInfo);
+		//判断音频文件是否被修改
+		//把前端传递过来的mediaFileId 和 数据库存储的mediaFileId进行比较
+		if(!trackInfoVo.getMediaFileId().equals(mediaFileId_database)) {
+			//重新调用腾讯云方法，根据新的mediaFileId查询音频文件最新信息
+			TrackMediaInfoVo trackMediaInfoVo = vodService.getmediaaInfoByFileId(trackInfoVo.getMediaFileId());
+			//	判断对象不为空.
+			if (null==trackMediaInfoVo){
+				//	抛出异常
+				throw new GuiguException(ResultCodeEnum.VOD_FILE_ID_ERROR);
+			}			//最新获取音频信息设置到trackInfo
+			trackInfo.setMediaUrl(trackMediaInfoVo.getMediaUrl());
+			trackInfo.setMediaType(trackMediaInfoVo.getType());
+			trackInfo.setMediaDuration(trackMediaInfoVo.getDuration());
+			trackInfo.setMediaSize(trackMediaInfoVo.getSize());
+
+			// 删除云点播声音
+			vodService.removeTrack(mediaFileId_database);
+		}
+
+
+		//调用方法进行修改
+		trackInfoMapper.updateById(trackInfo);
 	}
 
 	/**
