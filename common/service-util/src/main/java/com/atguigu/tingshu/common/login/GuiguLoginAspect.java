@@ -53,10 +53,10 @@ public class GuiguLoginAspect {
         }
         if (!StringUtils.isEmpty(token)){
             //组成缓存key
-            String loginKey=RedisConstant.USER_LOGIN_KEY_PREFIX+token;
+            //String loginKey=RedisConstant.USER_LOGIN_KEY_PREFIX+token;
             //获取缓存中用户数据
             UserInfo userInfo=(UserInfo) this.redisTemplate.opsForValue().get(token);
-            if (null!=userInfo){
+            if (null !=userInfo){
                 AuthContextHolder.setUserId(userInfo.getId());
             }
         }
