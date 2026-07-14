@@ -2,21 +2,24 @@ package com.atguigu.tingshu.user.api;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import com.atguigu.tingshu.common.login.GuiguLogin;
 import com.atguigu.tingshu.common.rabbit.constant.MqConst;
 import com.atguigu.tingshu.common.rabbit.service.RabbitService;
 import com.atguigu.tingshu.common.result.Result;
+import com.atguigu.tingshu.common.util.AuthContextHolder;
 import com.atguigu.tingshu.model.user.UserInfo;
 import com.atguigu.tingshu.user.service.UserInfoService;
+import com.atguigu.tingshu.vo.user.UserInfoVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.apache.catalina.User;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -36,6 +39,45 @@ public class WxLoginApiController {
     private RedisTemplate redisTemplate;
     @Autowired
     private RabbitService rabbitService;
+
+    /**
+     * 更新用户信息
+     * @param userInfoVo
+     * @return
+     */
+    @GuiguLogin
+    @Operation(summary = "更新用户信息")
+    @PostMapping("updateUser")
+    public Result updateUser(@RequestBody UserInfoVo userInfoVo){
+        // 1. 获取当前登录用户的 ID（从上下文）
+        Long userId = AuthContextHolder.getUserId();
+
+        // 2. 创建 UserInfo 实体对象（DO/Entity）
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(userId);                     // 设置主键 ID
+        userInfo.setNickname(userInfoVo.getNickname());   // 更新昵称
+        userInfo.setAvatarUrl(userInfoVo.getAvatarUrl()); // 更新头像 URL
+
+        // 3. 调用 Service 层执行更新
+        userInfoService.updateById(userInfo);  // 假设是 MyBatis-Plus 的 updateById
+        // 4. 返回成功响应
+        return Result.ok();
+    }
+
+    @GuiguLogin
+    //获取当前用户的登录信息
+    @GetMapping("getUserInfo")
+    public Result getUserInfo(){
+        //获取当前登录用户的id
+        Long userId = AuthContextHolder.getUserId();
+        UserInfo userInfo = userInfoService.getById(userId);
+        //创建UserInfoVo对象
+        UserInfoVo userInfoVo=new UserInfoVo();
+        //属性拷贝
+        BeanUtils.copyProperties(userInfo,userInfoVo);
+        return Result.ok(userInfoVo);
+    }
+
 
     //http://localhost/api/user/wxLogin/wxLogin/0a1NLdHa1Gbn2M0HYiIa1RXlxx1NLdH4
     //Request Method: GET
